@@ -6,7 +6,15 @@ import userEvent from '@testing-library/user-event'
 import {Main} from '../main'
 import App from '../app'
 
-jest.mock('../api/index', () => {})
+jest.mock('../api/index', () => {
+  return {
+    submitForm: jest.fn(),
+  }
+})
+
+afterEach(() => {
+  jest.clearAllMocks()
+})
 
 describe('Main component', () => {
   test('renders Home component when on Home route', () => {
@@ -16,6 +24,16 @@ describe('Main component', () => {
       </Router>,
     )
     expect(screen.getByText('You are home')).toBeInTheDocument()
+  })
+
+  test('not renders Home component when on About route', () => {
+    render(
+      <Router>
+        <Main />
+      </Router>,
+    )
+    userEvent.click(screen.getByText('About'))
+    expect(screen.queryByText('You are home')).not.toBeInTheDocument()
   })
 })
 
